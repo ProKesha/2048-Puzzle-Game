@@ -8,39 +8,19 @@ class Game {
   constructor(initialState) {
     this.SIZE = 4;
 
-    const empty = () =>
+    const createEmptyBoard = () =>
       Array.from({ length: this.SIZE }, () => Array(this.SIZE).fill(0));
 
     this._initial
       = initialState && initialState.length === this.SIZE
         ? initialState.map((r) => r.slice())
-        : empty();
+        : createEmptyBoard();
 
     this.board = this._initial.map((r) => r.slice());
     this.score = 0;
     this.status = 'idle';
     this._won = false;
   }
-  /** .
-   *
-   *
-   *
-   *
-   *
-   *                                                                  `
-   * Creates a new game instance.
-   *
-   * @param {number[][]} initialState
-   * The initial state of the board.
-   * @default
-   * [[0, 0, 0, 0],
-   *  [0, 0, 0, 0],
-   *  [0, 0, 0, 0],
-   *  [0, 0, 0, 0]]\
-   *
-   * If passed, the board will be initialized with the provided
-   * initial state.
-   */
 
   moveLeft() {
     return this._move('left');
@@ -146,19 +126,18 @@ class Game {
 
     if (changed) {
       this._addRandomTile();
-      this._updateStatus();
     }
-    this._updateStatus();
 
-    if (!this._hasMoves() && this.status === 'playing') {
-      this.status = 'lose';
-    }
+    this._updateStatus();
 
     return changed;
   }
 
   _boardsEqual(a, b) {
-    return a.flat().every((v, i) => v === b.flat()[i]);
+    const flatA = a.flat();
+    const flatB = b.flat();
+
+    return flatA.every((value, index) => value === flatB[index]);
   }
 
   _addRandomTile() {

@@ -6,7 +6,20 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
-    <title>2048</title>
+    <meta
+      name="description"
+      content="Play the 2048 puzzle game in your browser."
+    />
+    <meta
+      name="theme-color"
+      content="#fbf8ef"
+    />
+    <title>2048 Puzzle Game</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="./images/favicon.svg"
+    />
     <link
       rel="stylesheet"
       href="./styles/main.scss"
@@ -17,15 +30,28 @@
       <div class="game-header">
         <h1>2048</h1>
         <div class="controls">
-          <p class="info">
+          <p
+            class="info"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             Score:
             <span class="game-score">0</span>
           </p>
-          <button class="button start">Start</button>
+          <button
+            class="button start"
+            type="button"
+            aria-label="Start or restart the game"
+          >
+            Start
+          </button>
         </div>
       </div>
 
-      <table class="game-field">
+      <table
+        class="game-field"
+        aria-label="2048 game field"
+      >
         <tbody>
           <tr class="field-row">
             <td class="field-cell"></td>
@@ -57,7 +83,11 @@
         </tbody>
       </table>
 
-      <div class="message-container">
+      <div
+        class="message-container"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         <p class="message message-lose hidden">You lose! Restart the game?</p>
         <p class="message message-win hidden">Winner! Congrats! You did it!</p>
         <p class="message message-start">

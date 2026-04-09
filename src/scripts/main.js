@@ -5,23 +5,32 @@
 
 import Game from '../modules/Game.class.js';
 
+const BOARD_SIZE = 4;
+const SWIPE_THRESHOLD = 30;
+
 const game = new Game();
 
 const cells = Array.from(document.querySelectorAll('.field-cell'));
 const scoreEl = document.querySelector('.game-score');
-const btn = document.querySelector('.button');
+const button = document.querySelector('.button');
 const msgStart = document.querySelector('.message-start');
 const msgWin = document.querySelector('.message-win');
 const msgLose = document.querySelector('.message-lose');
 const field = document.querySelector('.game-field');
+const moveByDirection = {
+  ArrowLeft: () => game.moveLeft(),
+  ArrowRight: () => game.moveRight(),
+  ArrowUp: () => game.moveUp(),
+  ArrowDown: () => game.moveDown(),
+};
 
-const cellIndex = (r, c) => r * 4 + c;
+const cellIndex = (r, c) => r * BOARD_SIZE + c;
 
 function render() {
   const state = game.getState();
 
-  for (let r = 0; r < 4; r++) {
-    for (let c = 0; c < 4; c++) {
+  for (let r = 0; r < BOARD_SIZE; r++) {
+    for (let c = 0; c < BOARD_SIZE; c++) {
       const i = cellIndex(r, c);
       const el = cells[i];
       const val = state[r][c];
@@ -43,14 +52,14 @@ function render() {
     msgStart.classList.remove('hidden');
     msgWin.classList.add('hidden');
     msgLose.classList.add('hidden');
-    btn.textContent = 'Start';
-    btn.classList.add('start');
-    btn.classList.remove('restart');
+    button.textContent = 'Start';
+    button.classList.add('start');
+    button.classList.remove('restart');
   } else {
     msgStart.classList.add('hidden');
-    btn.textContent = 'Restart';
-    btn.classList.remove('start');
-    btn.classList.add('restart');
+    button.textContent = 'Restart';
+    button.classList.remove('start');
+    button.classList.add('restart');
   }
 
   if (gameStatus === 'win') {
@@ -66,7 +75,17 @@ function render() {
   }
 }
 
-btn.addEventListener('click', () => {
+function applyMove(move) {
+  if (game.getStatus() !== 'playing') {
+    return;
+  }
+
+  if (move()) {
+    render();
+  }
+}
+
+button.addEventListener('click', () => {
   if (game.getStatus() === 'idle') {
     game.start();
   } else {
@@ -79,42 +98,12 @@ btn.addEventListener('click', () => {
 document.addEventListener('keydown', (e) => {
   const key = e.key;
 
-  if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(key)) {
-    return;
-  }
-
-  if (game.getStatus() !== 'playing') {
+  if (!moveByDirection[key]) {
     return;
   }
 
   e.preventDefault();
-
-  let moved = false;
-
-  switch (key) {
-    case 'ArrowLeft':
-      moved = game.moveLeft();
-      break;
-
-    case 'ArrowRight':
-      moved = game.moveRight();
-      break;
-
-    case 'ArrowUp':
-      moved = game.moveUp();
-      break;
-
-    case 'ArrowDown':
-      moved = game.moveDown();
-      break;
-
-    default:
-      break;
-  }
-
-  if (moved) {
-    render();
-  }
+  applyMove(moveByDirection[key]);
 });
 
 let startX = 0;
@@ -163,24 +152,14 @@ field.addEventListener('touchcancel', () => {
 });
 
 function handleSwipe(dx, dy) {
-  if (game.getStatus() !== 'playing') {
+  if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) {
     return;
   }
-
-  if (Math.abs(dx) < 30 && Math.abs(dy) < 30) {
-    return;
-  }
-
-  let moved = false;
 
   if (Math.abs(dx) > Math.abs(dy)) {
-    moved = dx > 0 ? game.moveRight() : game.moveLeft();
+    applyMove(dx > 0 ? moveByDirection.ArrowRight : moveByDirection.ArrowLeft);
   } else {
-    moved = dy > 0 ? game.moveDown() : game.moveUp();
-  }
-
-  if (moved) {
-    render();
+    applyMove(dy > 0 ? moveByDirection.ArrowDown : moveByDirection.ArrowUp);
   }
 }
 

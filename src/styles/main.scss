@@ -2,9 +2,20 @@ $tile-size: 96px;
 $tile-gap: 12px;
 $panel-size: 96px;
 $container-width: $tile-size * 4 + $tile-gap * 5;
+$transition-duration: 250ms;
+$transition-easing: ease;
+$focus-ring-color: #8f7a66;
 
 html {
   touch-action: manipulation;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
 }
 
 body {
@@ -18,6 +29,7 @@ body {
   font-family: sans-serif;
   font-size: 24px;
   font-weight: 900;
+  line-height: 1.2;
 }
 
 body.no-scroll {
@@ -37,6 +49,9 @@ body.no-scroll {
   vertical-align: middle;
   touch-action: none;
   user-select: none;
+  transition:
+    background-color $transition-duration $transition-easing,
+    color $transition-duration $transition-easing;
 
   &--2 {
     background: #eee4da;
@@ -97,6 +112,7 @@ body.no-scroll {
   border-spacing: $tile-gap;
   border-radius: 8px;
   background: #bbada0;
+  table-layout: fixed;
   overscroll-behavior: contain;
   touch-action: none;
   -webkit-user-select: none;
@@ -159,24 +175,28 @@ h1 {
   font-size: 22px;
   font-weight: 700;
   touch-action: manipulation;
-  transition: 0.25s ease background;
+  transition:
+    background-color $transition-duration $transition-easing,
+    transform $transition-duration $transition-easing,
+    box-shadow $transition-duration $transition-easing;
+
+  &:focus-visible {
+    outline: 3px solid $focus-ring-color;
+    outline-offset: 3px;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
 .start {
   background: #1dae28;
   font-size: 28px;
-
-  &:hover {
-    background: #179921;
-  }
 }
 
 .restart {
   background: #f1b2b2;
-
-  &:hover {
-    background: #f87474;
-  }
 }
 
 .message {
@@ -199,6 +219,7 @@ h1 {
   flex-direction: column;
   align-items: center;
   width: $container-width;
+  max-width: 100%;
   overscroll-behavior: contain;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -213,6 +234,30 @@ h1 {
 .message-container {
   width: 100%;
   min-height: 92px;
+}
+
+@media (hover: hover) {
+  .start:hover {
+    background: #179921;
+  }
+
+  .restart:hover {
+    background: #f87474;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media (max-width: 640px) {
