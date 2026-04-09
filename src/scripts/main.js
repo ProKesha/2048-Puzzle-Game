@@ -145,6 +145,10 @@ field.addEventListener('touchstart', (e) => {
   startY = touch.clientY;
 }, { passive: true });
 
+field.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+}, { passive: false });
+
 field.addEventListener('touchend', (e) => {
   const touch = e.changedTouches[0];
 
