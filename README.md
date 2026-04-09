@@ -1,4 +1,26 @@
-# Base layout template with Gulp, SCSS and Stylelint
-1. Create a repo using this template
-1. Replace `<your_account>` and `<repo_name>` with your Github username and the new repo name
-    - [DEMO LINK](https://<your_account>.github.io/<repo_name>/)
+# 2048 Puzzle Game
+
+A classic 2048 puzzle game implemented with JavaScript. The goal is to combine tiles with the same numbers to reach the 2048 tile. This project demonstrates game logic, DOM manipulation, and state management.
+
+## Live Preview
+
+https://prokesha.github.io/2048-Puzzle-Game/
+
+## Design Reference
+
+Based on the classic 2048 game mechanics.
+
+## Technologies Used
+
+- HTML
+- CSS (SCSS)
+- JavaScript (ES6)
+
+## Getting Started
+
+```bash
+git clone https://github.com/ProKesha/2048-Puzzle-Game.git
+cd 2048-Puzzle-Game
+
+npm install
+npm start
