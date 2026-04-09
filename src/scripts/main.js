@@ -13,6 +13,7 @@ const btn = document.querySelector('.button');
 const msgStart = document.querySelector('.message-start');
 const msgWin = document.querySelector('.message-win');
 const msgLose = document.querySelector('.message-lose');
+const field = document.querySelector('.game-field');
 
 const cellIndex = (r, c) => r * 4 + c;
 
@@ -65,16 +66,6 @@ function render() {
   }
 }
 
-function ensurePlaying() {
-  if (game.getStatus() === 'idle') {
-    game.start();
-
-    return true;
-  }
-
-  return false;
-}
-
 btn.addEventListener('click', () => {
   if (game.getStatus() === 'idle') {
     game.start();
@@ -92,9 +83,11 @@ document.addEventListener('keydown', (e) => {
     return;
   }
 
-  e.preventDefault();
+  if (game.getStatus() !== 'playing') {
+    return;
+  }
 
-  const started = ensurePlaying();
+  e.preventDefault();
 
   let moved = false;
 
@@ -119,7 +112,7 @@ document.addEventListener('keydown', (e) => {
       break;
   }
 
-  if (started || moved) {
+  if (moved) {
     render();
   }
 });
@@ -127,7 +120,13 @@ document.addEventListener('keydown', (e) => {
 let startX = 0;
 let startY = 0;
 
-const field = document.querySelector('.game-field');
+function lockPageScroll() {
+  document.body.classList.add('no-scroll');
+}
+
+function unlockPageScroll() {
+  document.body.classList.remove('no-scroll');
+}
 
 field.addEventListener('mousedown', (e) => {
   startX = e.clientX;
@@ -141,9 +140,11 @@ field.addEventListener('mouseup', (e) => {
 field.addEventListener('touchstart', (e) => {
   const touch = e.changedTouches[0];
 
+  e.preventDefault();
   startX = touch.clientX;
   startY = touch.clientY;
-}, { passive: true });
+  lockPageScroll();
+}, { passive: false });
 
 field.addEventListener('touchmove', (e) => {
   e.preventDefault();
@@ -152,15 +153,23 @@ field.addEventListener('touchmove', (e) => {
 field.addEventListener('touchend', (e) => {
   const touch = e.changedTouches[0];
 
+  e.preventDefault();
   handleSwipe(touch.clientX - startX, touch.clientY - startY);
+  unlockPageScroll();
+}, { passive: false });
+
+field.addEventListener('touchcancel', () => {
+  unlockPageScroll();
 });
 
 function handleSwipe(dx, dy) {
-  if (Math.abs(dx) < 30 && Math.abs(dy) < 30) {
+  if (game.getStatus() !== 'playing') {
     return;
   }
 
-  const started = ensurePlaying();
+  if (Math.abs(dx) < 30 && Math.abs(dy) < 30) {
+    return;
+  }
 
   let moved = false;
 
@@ -170,7 +179,7 @@ function handleSwipe(dx, dy) {
     moved = dy > 0 ? game.moveDown() : game.moveUp();
   }
 
-  if (started || moved) {
+  if (moved) {
     render();
   }
 }

@@ -20,6 +20,10 @@ body {
   font-weight: 900;
 }
 
+body.no-scroll {
+  overflow: hidden;
+}
+
 .field-cell {
   width: $tile-size;
   height: $tile-size;
